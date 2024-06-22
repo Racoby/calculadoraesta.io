@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Cobrança</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input {
+      margin-top: 5px;
+      padding: 10px;
+      width: calc(100% - 22px);
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Sistema de Cobrança de Estacionamento</h1>
+  <form id="parking-form">
+    <label for="entrada">Horário de Entrada:</label>
+    <input type="time" id="entrada" name="entrada" required>
+
+    <label for="saida">Horário de Saída:</label>
+    <input type="time" id="saida" name="saida" required>
+
+    <button type="button" onclick="calcularValor()">Calcular Valor</button>
+  </form>
+
+  <div class="result" id="resultado">
+    <p>Tempo total: <span id="tempo-total"></span></p>
+    <p>Valor a pagar: R$ <span id="valor"></span></p>
+  </div>
+
+  <script>
+    function calcularValor() {
+      const entrada = document.getElementById('entrada').value;
+      const saida = document.getElementById('saida').value;
+
+      if (!entrada || !saida) {
+        alert('Por favor, insira ambos os horários.');
+        return;
+      }
+
+      const [entradaHora, entradaMinuto] = entrada.split(':').map(Number);
+      const [saidaHora, saidaMinuto] = saida.split(':').map(Number);
+
+      const entradaTotalMinutos = entradaHora * 60 + entradaMinuto;
+      const saidaTotalMinutos = saidaHora * 60 + saidaMinuto;
+
+      let tempoTotalMinutos = saidaTotalMinutos - entradaTotalMinutos;
+      if (tempoTotalMinutos < 0) {
+        tempoTotalMinutos += 24 * 60; // Ajuste para o caso de passar da meia-noite
+      }
+
+      const tempoHoras = Math.floor(tempoTotalMinutos / 60);
+      const tempoMinutos = tempoTotalMinutos % 60;
+
+      let valor = 0;
+
+      if (tempoTotalMinutos <= 30) {
+        valor = 5;
+      } else if (tempoTotalMinutos <= 60) {
+        valor = 8;
+      } else {
+        valor = 8 + Math.ceil((tempoTotalMinutos - 60) / 60) * 4;
+      }
+
+      if (valor > 20) {
+        valor = 20;
+      }
+
+      document.getElementById('tempo-total').innerText = `${tempoHoras} horas e ${tempoMinutos} minutos`;
+      document.getElementById('valor').innerText = valor.toFixed(2);
+    }
+  </script>
+</body>
+
+</html>
